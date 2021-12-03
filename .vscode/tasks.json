@@ -1,0 +1,47 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Campnou Initial Network",
+            "type": "shell",
+            "command": "aconsole.exe -script helloworld.py",
+            "windows": {
+                "command": "\"C:\\Program Files\\Aimsun\\Aimsun Next 20\\aconsole.exe\" -script aimsun_playground\\src\\Aimsun\\assignment\\macroscopic_assignment.py aimsun_playground\\input_files\\aimsun_files\\initial_campnou_network.ang aimsun_playground\\output_files\\test_macro_output.ang aimsun_playground\\input_files\\matrices_input.txt"
+            },
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Campnou export_matrix",
+            "type": "shell",
+            "command": "aconsole.exe -script helloworld.py",
+            "windows": {
+                "command": "\"C:\\Program Files\\Aimsun\\Aimsun Next 20\\aconsole.exe\" -script aimsun_playground\\src\\Aimsun\\assignment\\export_matrix.py aimsun_playground\\input_files\\aimsun_files\\campnou_network.ang tmg\\aimsun_playground\\output_files aimsun_playground\\output_files\\matrices_output.txt"
+            },
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Campnou import_matrix",
+            "type": "shell",
+            "command": "aconsole.exe -script helloworld.py",
+            "windows": {
+                "command": "\"C:\\Program Files\\Aimsun\\Aimsun Next 20\\aconsole.exe\" -script aimsun_playground\\src\\Aimsun\\assignment\\import_matrix.py aimsun_playground\\input_files\\aimsun_files\\initial_campnou_network.ang aimsun_playground\\input_files\\matrices_input.txt aimsun_playground\\output_files\\aimsun_files\\test_network_output.ang"
+            },
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        }
+    ]
+}

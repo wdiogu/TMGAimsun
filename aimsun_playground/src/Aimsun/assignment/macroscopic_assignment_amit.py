@@ -80,37 +80,37 @@ def edit_and_read_custom_attribute(model, console,  catalog, geomodel):
     addColumn(user_class_type, ["GKUserClass::value_of_time_python", "value_of_time_python", GKColumn.Double, GKColumn.eExternal])
     addColumn(user_class_type, ["GKUserClass::value_of_time2_python", "value_of_time2_python", GKColumn.Double, GKColumn.eExternal])
 
-    for x in user_classes:
-        print (x, user_classes[x].getName())
+    #for x in user_classes:
+    #    print (x, user_classes[x].getName())
 
     attributes  = user_class_type.getColumns( GKType.eSearchOnlyThisType )
     for x in attributes:
         if x.getExternalName() == "value_of_time_python":
             for user_class in user_classes:
                 if user_classes[user_class].getName() == "Car":
-                    print (dir(user_classes[user_class]))
+                    #print (dir(user_classes[user_class]))
                     user_classes[user_class].setDataValueDouble(x, 235.34)
                 elif user_classes[user_class].getName() == "Truck":
-                    print (dir(user_classes[user_class]))
+                    #print (dir(user_classes[user_class]))
                     user_classes[user_class].setDataValueDouble(x, 345.45)
                 elif user_classes[user_class].getName() == "Bus":
-                    print (dir(user_classes[user_class]))
+                    #print (dir(user_classes[user_class]))
                     user_classes[user_class].setDataValueDouble(x, 678.678)
             break
    
     #save the model 
-    save(console, model)
+    #save(console, model)
 
 def read_vdf_functions(console, model, catalog):
     """attempt to read the vdfs in a given pre-existing network by looping over the function folder"""
-    print('hello')
+    #print('hello')
     #getTYpe() returns an reference to c object type 
     classtype_function_cost = model.getType("GKFunctionCost")
     dict_catalog_function_cost = catalog.getObjectsByType( classtype_function_cost )
     for item in dict_catalog_function_cost:
         val = dict_catalog_function_cost[item]
-        print (item, dict_catalog_function_cost[item].getName(), val.getFunctionType(), val.getLanguage(), val.getDefinition() )
-    print (dir(dict_catalog_function_cost[item]))
+        #print (item, dict_catalog_function_cost[item].getName()) #, val.getFunctionType(), val.getLanguage(), val.getDefinition() )
+    #print (dir(dict_catalog_function_cost[item]))
 
 fun_test = """
 def hello_world():
@@ -119,21 +119,37 @@ def hello_world():
 
 def edit_existing_vdf_functions(console, model, catalog):
     """attempt to edit an existing vdf function in the network heer we can create a new python function"""
-    print('hello')
+    #print('hello')
     #getTYpe() returns an reference to c object type 
     classtype_function_cost = model.getType("GKFunctionCost")
     dict_catalog_function_cost = catalog.getObjectsByType( classtype_function_cost )
     for item in dict_catalog_function_cost:
-        if item == 2826:
+        print (item, dict_catalog_function_cost[item].getName())
+        if  dict_catalog_function_cost[item].getName() == "VDF Section 10":
+            print (dict_catalog_function_cost[item].getName())
             function_of_interest = dict_catalog_function_cost[item]
             function_of_interest.setFunctionType(4)
             function_of_interest.setDefinition(fun_test)
 
 
+def write_vdf_function(console, model, catalog, dict_catalog_function_cost, name_of_vdf_function):
+    """
+    this unction can edit any function based on the incoming parameters 
+    """
+    #classtype_function_cost = model.getType("GKFunctionCost")
+    #dict_catalog_function_cost = catalog.getObjectsByType( classtype_function_cost )
+    for item in dict_catalog_function_cost:
+        #print (dict_catalog_function_cost[item].getName(), name_of_vdf_function )
+        if dict_catalog_function_cost[item].getName() == name_of_vdf_function:
+            print ('yes found ')
+            function_of_interest = dict_catalog_function_cost[item]
+            function_of_interest.setFunctionType(4)
+            function_of_interest.setDefinition(fun_test)
+
 def create_gkobject(gk_object_internal_name, model, target_name):
     """This function creates a new gkojbect """
     gk_object = GKSystem.getSystem().newObject(str(gk_object_internal_name), model)
-    gk_object.setName(str(target_name + " " + str(gk_object.getId())))
+    gk_object.setName(str(target_name)) # + " " + str(gk_object.getId())))
     return gk_object
 
 def add_folder_to_gkobject(internal_folder_name, model, gkobject):
@@ -160,7 +176,18 @@ def create_new_functions(console, model, catalog):
     functions = create_gkobject("GKFunctionCost", model, "Amits_VDFs")
     add_folder_to_gkobject("GKModel::functions", model, functions)
 
-   
+    #another attempt to add a function and its associted cost function
+    name_of_function = "AmitVDFs2"
+    functions2 = create_gkobject("GKFunctionCost", model, name_of_function)
+    add_folder_to_gkobject("GKModel::functions", model, functions2)
+    
+    classtype_function_cost = model.getType("GKFunctionCost")
+    dict_catalog_function_cost = catalog.getObjectsByType( classtype_function_cost )
+    write_vdf_function(console, model, catalog, dict_catalog_function_cost, name_of_function)
+
+
+
+ 
 
 # Main script to complete the full netowrk import
 def main(argv):

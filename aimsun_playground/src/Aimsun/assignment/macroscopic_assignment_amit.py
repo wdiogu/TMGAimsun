@@ -53,16 +53,18 @@ def loadModel(filepath, console):
     return model, catalog, geomodel
 
 def addColumn(userClassType, arg_list):
+    """to add custom attributes to the userClass object"""
     userClassType.addColumn( arg_list[0], arg_list[1], arg_list[2] ) 
     print ('columns were successfully added')
 
 def save(console, model):
-    console.save("C:\\Users\\sandhela\\source\\repos\\williamsProject1\\aimsun_playground\\input_files\\aimsun_files\\test2.ang")
+    console.save("C:\\Users\\sandhela\\source\\repos\\TMGMacroAssign\\aimsun_playground\\output_files\\test2.ang")
     # Reset the Aimsun undo buffer
     model.getCommander().addCommand( None )
     print ("Network saved Successfully")
 
-def create_and_read_custom_attribute(model, console,  catalog, geomodel):
+def edit_and_read_custom_attribute(model, console,  catalog, geomodel):
+    """read user class objecet create two new custom attributes and change value of custom attributes"""
     #in C interop reference to logic underhood in C of GKuserclass
     #to deal with taht refelction is via string compariosn and returns a 
     #proxy object and proxy boject to get to c object itself 
@@ -77,7 +79,6 @@ def create_and_read_custom_attribute(model, console,  catalog, geomodel):
     # #add a new column of a custom attribute
     addColumn(user_class_type, ["GKUserClass::value_of_time_python", "value_of_time_python", GKColumn.Double, GKColumn.eExternal])
     addColumn(user_class_type, ["GKUserClass::value_of_time2_python", "value_of_time2_python", GKColumn.Double, GKColumn.eExternal])
-
 
     for x in user_classes:
         print (x, user_classes[x].getName())
@@ -108,13 +109,14 @@ def read_vdf_functions(console, model, catalog):
     dict_catalog_function_cost = catalog.getObjectsByType( classtype_function_cost )
     for item in dict_catalog_function_cost:
         val = dict_catalog_function_cost[item]
-        #print (item, dict_catalog_function_cost[item].getName(), val.getFunctionType(), val.getLanguage(), val.getDefinition() )
+        print (item, dict_catalog_function_cost[item].getName(), val.getFunctionType(), val.getLanguage(), val.getDefinition() )
     print (dir(dict_catalog_function_cost[item]))
 
 fun_test = """
 def hello_world():
     print("hello world")
 """
+
 def edit_existing_vdf_functions(console, model, catalog):
     """attempt to edit an existing vdf function in the network heer we can create a new python function"""
     print('hello')
@@ -128,11 +130,36 @@ def edit_existing_vdf_functions(console, model, catalog):
             function_of_interest.setDefinition(fun_test)
 
 
+def create_gkobject(gk_object_internal_name, model, target_name):
+    """This function creates a new gkojbect """
+    gk_object = GKSystem.getSystem().newObject(str(gk_object_internal_name), model)
+    gk_object.setName(str(target_name + " " + str(gk_object.getId())))
+    return gk_object
+
+def add_folder_to_gkobject(internal_folder_name, model, gkobject):
+    """
+    This function adds the folder to the network 
+    """
+    folder_name = str(internal_folder_name)
+    folder = model.getCreateRootFolder().findFolder(folder_name)
+    if folder == None:
+        folder = GKSystem.getSystem().createFolder(
+            model.getCreateRootFolder(), folder_name
+        )
+    folder.append(gkobject)
+
 def create_new_functions(console, model, catalog):
     """attempt to create a new vdf function"""
     print('hello')
-    classtype_function_cost = model.getType("GKFunctionCost")
-    dict_catalog_function_cost = catalog.getObjectsByType( classtype_function_cost )
+
+    centroid_config = create_gkobject(
+        "GKCentroidConfiguration", model, "Centroid Configuration"
+    )
+    add_folder_to_gkobject("GKModel::centroidsConf", model, centroid_config)
+
+    functions = create_gkobject("GKFunctionCost", model, "Amits_VDFs")
+    add_folder_to_gkobject("GKModel::functions", model, functions)
+
    
 
 # Main script to complete the full netowrk import
@@ -149,9 +176,9 @@ def main(argv):
     print ('argv: ', argv)
     # generate a model of the input network
     model, catalog, geomodel = loadModel(Network, console)
-    #create_and_read_custom_attribute(model, console, catalog, geomodel)
-    #read_vdf_functions(console, model, catalog)
-    #edit_existing_vdf_functions(console, model, catalog)
+    edit_and_read_custom_attribute(model, console, catalog, geomodel)
+    read_vdf_functions(console, model, catalog)
+    edit_existing_vdf_functions(console, model, catalog)
     create_new_functions(console, model, catalog)
     save(console, model)
 

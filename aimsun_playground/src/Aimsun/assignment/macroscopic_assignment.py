@@ -29,8 +29,59 @@ def main(argv):
 
     functions = create_gkobject("GKFunctionCost", model, "Amits_VDFs")
     add_folder_to_gkobject("GKModel::functions", model, functions)
+    ##########################################################################################
+    sectionType = model.getType("GKSection")
 
+    for types in model.getCatalog().getUsedSubTypesFromType(sectionType):
+
+        for section in types.values():
+            attr = section.getType().getColumn(
+                "GKSection::numberOfPTLinesAtt", GKType.eSearchThisAndParentTypes
+            )
+            section.setSpeed(section.getSpeed() * 0)
+
+            print(
+                section.getId(),
+                " : ",
+                section.getSpeed(),
+                "km/h : ",
+                section.getRoadType().getName(),
+            )
+    ############################################################################################
+    # sectionType = model.getType("GKSection")
+    # attributes = sectionType.getColumns(GKType.eSearchOnlyThisType)
+
+    # for x in attributes:
+
+    #     print("Name :" + str(x.getName()))
+
+    #     print("External Name: " + str(x.getExternalName()))
+
+    #     print("Column Type: " + str(x.getColumnType()))
+
+    #     print("Description: " + str(x.getDescription()))
     save_network(console, model, argv)
+
+    ####################################################################
+    # sectionType = model.getType("GKSection")
+    # attributes = sectionType.getColumns(GKType.eSearchOnlyThisType)
+
+    # sectionType = model.getType("GKSection")
+
+    # for types in model.getCatalog().getUsedSubTypesFromType(sectionType):
+
+    #     for section in types.values():
+
+    #         attr = section.getType().getColumn(
+    #             "GKSection::numberOfPTLinesAtt", GKType.eSearchThisAndParentTypes
+    #         )
+    #         print(
+    #             section.getId(),
+    #             ",",
+    #             section.getSpeed(),
+    #             ",",
+    #             section.getDataValueDouble(attr),
+    #         )
 
 
 def load_network(console, network_file):
